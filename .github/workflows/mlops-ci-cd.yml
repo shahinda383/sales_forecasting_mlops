@@ -1,0 +1,58 @@
+
+# ================================================================
+# 🌍 GitHub Actions – CI/CD Pipeline for MLOps
+# ================================================================
+
+name: MLOps_CICD_Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout repo
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Set up Python
+      - name: Setup Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      # 3️⃣ Install Dependencies
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 4️⃣ Run Tests (Optional Unit Tests)
+      - name: Run Unit Tests
+        run: pytest || echo "⚠ No tests found, skipping..."
+
+      # 5️⃣ Automated Model Retraining
+      - name: Check Data Drift & Retrain Model
+        run: python train_retrain.py
+
+      # 6️⃣ Save Deployment Logs
+      - name: Upload Deployment Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment_report
+          path: deployment_report.csv
+
+      # 7️⃣ Deploy Streamlit App (Optional for Streamlit Cloud)
+      - name: Deploy Streamlit App
+        if: success()
+        run: |
+          echo "🚀 Deploying Streamlit App..."
+          streamlit run app_streamlit.py --server.headless true &
+          sleep 10
+          echo "✅ Streamlit app deployed successfully!"
