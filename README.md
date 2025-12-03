@@ -1,3 +1,9 @@
+
+![Plan of My Model](https://github.com/shahinda383/Sales-Forecasting-and-Optimization/blob/2def9dcb50ea57b2d6d5d6d9602a033d368431e5/diagrams/plan%20of%20model.jpg) 
+
+
+
+
 ```
 project/
 │── data/
